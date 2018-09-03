@@ -25,6 +25,14 @@ class Client(object):
         self._api_base_url = api_base_url
         self._auth = auth
 
+    def run_scheduler(self, num_runs=2):
+        """Run the airflow scheduler.
+
+        :param num_runs:
+        :return:
+        """
+        raise NotImplementedError()
+
     def trigger_dag(self, dag_id, run_id=None, conf=None, execution_date=None):
         """Create a dag run for the specified dag.
 

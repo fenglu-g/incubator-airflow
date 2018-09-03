@@ -24,6 +24,7 @@ import airflow.api
 from airflow.api.common.experimental import delete_dag as delete
 from airflow.api.common.experimental import pool as pool_api
 from airflow.api.common.experimental import trigger_dag as trigger
+from airflow.api.common.experimental import run_scheduler as scheduler
 from airflow.api.common.experimental.get_task import get_task
 from airflow.api.common.experimental.get_task_instance import get_task_instance
 from airflow.exceptions import AirflowException
@@ -37,6 +38,25 @@ requires_authentication = airflow.api.api_auth.requires_authentication
 
 api_experimental = Blueprint('api_experimental', __name__)
 
+
+@csrf.exempt
+@api_experimental.route('/scheduler_runs/<string:dag_id>', methods=['POST'])
+@requires_authentication
+def run_scheduler(dag_id):
+    """
+    Start one scheduler run.
+    """
+    data = request.get_json(force=True)
+    try:
+        result = scheduler.run_scheduler(dag_id, 2)
+    except AirflowException as err:
+        _log.error(err)
+        response = jsonify(error="{}".format(err))
+        response.status_code = 503
+        return response
+
+    response = jsonify(message="Started one scheduler run")
+    return response
 
 @csrf.exempt
 @api_experimental.route('/dags/<string:dag_id>/dag_runs', methods=['POST'])

@@ -21,6 +21,7 @@ from airflow.api.client import api_client
 from airflow.api.common.experimental import pool
 from airflow.api.common.experimental import trigger_dag
 from airflow.api.common.experimental import delete_dag
+from airflow.api.common.experimental import run_scheduler
 
 
 class Client(api_client.Client):
@@ -51,3 +52,6 @@ class Client(api_client.Client):
     def delete_pool(self, name):
         p = pool.delete_pool(name=name)
         return p.pool, p.slots, p.description
+
+    def run_scheduler(self, dag_id=None, num_runs=2):
+        return run_scheduler.run_scheduler(dag_id, num_runs)
